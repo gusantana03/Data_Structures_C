@@ -11,7 +11,7 @@ typedef struct{
 }queue;
 
 void init(queue *qu){
-    qu->front = SIZE-1;
+    qu->front = SIZE -1;
     qu->rear = SIZE -1;
 }
 
