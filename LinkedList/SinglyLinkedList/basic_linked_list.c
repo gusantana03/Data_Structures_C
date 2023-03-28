@@ -4,7 +4,7 @@
 typedef struct node{
     int data;
     struct node *next;
-} node;
+} struct_node;
 
 typedef struct{
     struct node *head;
@@ -19,7 +19,7 @@ void initList(linkedList *listPointer){
 }
 
 int insertTail(linkedList *listPointer, int data){
-    node *newNodePointer = (node*)malloc(sizeof(node));
+    struct_node *newNodePointer = (struct_node*)malloc(sizeof(struct_node));
     if (newNodePointer == NULL){
         printf("Error while allocating memory.\n");
         return 1;
@@ -40,7 +40,7 @@ int insertTail(linkedList *listPointer, int data){
 }
 
 int insertHead(linkedList *listPointer, int data){
-    node *newNodePointer = (node*)malloc(sizeof(node));
+    struct_node *newNodePointer = (struct_node*)malloc(sizeof(struct_node));
     if (newNodePointer == NULL){
         printf("Error while allocating the memory.\n");
         return 1;
@@ -66,7 +66,7 @@ int printList(linkedList *listPointer){
         return 1;
     }
 
-    node *current = listPointer->head;
+    struct_node *current = listPointer->head;
     while(current != NULL){
         printf("%d\n", current->data);
         current = current->next;
@@ -86,9 +86,13 @@ int menu(linkedList *listPointer){
                     insertTail(listPointer, value);
                     break;
                 case 2:
+                    scanf("%d", &value);
+                    insertHead(listPointer, value);
+                    break;
+                case 3:
                     printList(listPointer);
                     break;
-                case 3: 
+                case 4: 
                         exit(0);
                 default:
                         printf("Invalid choice\n");
