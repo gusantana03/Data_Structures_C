@@ -4,7 +4,7 @@
 typedef struct node{
     int data;
     struct node *next;
-} struct_node;
+}struct_node;
 
 typedef struct{
     struct node *head;
@@ -20,7 +20,7 @@ void initList(linkedList *listPointer){
 
 int insertTail(linkedList *listPointer, int data){
     struct_node *newNodePointer = (struct_node*)malloc(sizeof(struct_node));
-    if (newNodePointer == NULL){
+    if(newNodePointer == NULL){
         printf("Error while allocating memory.\n");
         return 1;
     }
@@ -44,7 +44,7 @@ int insertTail(linkedList *listPointer, int data){
 
 int insertHead(linkedList *listPointer, int data){
     struct_node *newNodePointer = (struct_node*)malloc(sizeof(struct_node));
-    if (newNodePointer == NULL){
+    if(newNodePointer == NULL){
         printf("Error while allocating the memory.\n");
         return 1;
     }
@@ -64,9 +64,64 @@ int insertHead(linkedList *listPointer, int data){
     return 0;
 }
 
+int insertFromFile(linkedList *listPointer){
+    FILE *inputFile = fopen("integers.txt", "r");
+    if (inputFile == NULL){
+        printf("File couldn't be opended.\n");
+        return 1;
+    }
+    int data;
+    fscanf(inputFile, "%d", &data);
+    while (!feof(inputFile)){
+        insertTail(listPointer, data);
+        fscanf(inputFile, "%d", &data);
+    }
+    return 0;
+}
+
+int deleteFirstNode(linkedList *listPointer){
+    if(listPointer->nodeCount == 0){
+        return 0;
+    }
+    struct_node *firstNode = listPointer->head;
+    int data = firstNode->data;
+    if(listPointer->nodeCount == 1){
+        listPointer->head = NULL;
+        listPointer->tail = NULL;
+    }
+    else{
+        listPointer->head = firstNode->next;
+    }
+    free(firstNode);
+    listPointer->nodeCount--;
+    return data;
+}
+
+int deleteLastNode(linkedList *listPointer){
+    if(listPointer->nodeCount == 0){
+        return 0;
+    }
+    struct_node *currentNode = listPointer->head;
+    int data = listPointer->tail->data;
+    if(listPointer->nodeCount == 1){
+        listPointer->head = NULL;
+        listPointer->tail = NULL;
+    }
+    else{
+        while(currentNode->next != listPointer->tail){
+            currentNode = currentNode->next;
+        }
+        free(listPointer->tail);
+        listPointer->tail = currentNode;
+        listPointer->tail->next = NULL;
+    }
+    listPointer->nodeCount--; 
+    return data;
+}
+
 int printList(linkedList *listPointer){
-    if (listPointer->nodeCount == 0){
-        printf("List it's empty.\n");
+    if(listPointer->nodeCount == 0){
+        printf("The list it's empty.\n");
         return 1;
     }
 
@@ -81,9 +136,9 @@ int printList(linkedList *listPointer){
 
 int menu(linkedList *listPointer){
     int choice, value;
-    printf("1-> ");
+    printf("1-> Insert at tail.\n2-> Insert at head.\n3-> Insert integers from file.\n4-> Delete the first node.\n5-> Delete the last node.\n6-> Display list.\n7-> Exit.\n");
     while(1){
-        printf("Choose a option: ");
+        printf("Choose an option: ");
         scanf("%d", &choice);
         switch(choice){
                 case 1: 
@@ -95,10 +150,36 @@ int menu(linkedList *listPointer){
                     insertHead(listPointer, value);
                     break;
                 case 3:
-                    printList(listPointer);
+                    if(insertFromFile(listPointer) == 0){
+                        printf("Integers were loaded from the file.\n");
+                    }
+                    else{
+                        printf("Error while loading the integers from the file.\n");
+                    }
                     break;
                 case 4: 
-                        exit(0);
+                    int funcReturn = deleteFirstNode(listPointer);
+                    if(funcReturn == 0){
+                        printf("The list is empty.\n");
+                    }
+                    else{
+                        printf("The deleted data is: %d.\n", funcReturn);
+                    }
+                    break;
+                case 5:
+                    funcReturn = deleteLastNode(listPointer);
+                    if(funcReturn == 0){
+                        printf("The list is empty.\n");
+                    }
+                    else{
+                        printf("The deleted data is: %d.\n", funcReturn);
+                    }
+                    break;
+                case 6:
+                    printList(listPointer);
+                    break;
+                case 7: 
+                    exit(0);
                 default:
                         printf("Invalid choice\n");
             }
@@ -111,5 +192,4 @@ int main(){
     initList(&list);
 
     menu(&list);
-
 }
